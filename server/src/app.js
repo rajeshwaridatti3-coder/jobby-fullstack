@@ -9,8 +9,17 @@ import { notFound, errorHandler } from './middleware/errors.js';
 
 const app = express();
 app.use(helmet());
+const allowedOrigins = [
+  'https://jobby-fullstack.vercel.app',
+  'http://localhost:5173',
+  ...(process.env.CLIENT_ORIGIN || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN?.split(',').map((item) => item.trim()) || 'http://localhost:5173'
+  origin: allowedOrigins
 }));
 app.use(express.json({ limit: '1mb' }));
 if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
